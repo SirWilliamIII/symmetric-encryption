@@ -1,0 +1,21 @@
+{
+"name": "k8s-demo-app",
+"version": "1.0.0",
+"description": "Simple Kubernetes demo application",
+"main": "app.js",
+"scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+},
+"dependencies": {
+    "express": "^4.18.2"
+},
+"keywords": [
+    "kubernetes",
+    "docker",
+    "node",
+    "express"
+],
+"author": "",
+"license": "ISC"
+}
