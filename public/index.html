@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encryption App</title>
+    <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background-color: #1e1e1e; color: #ccc; }
+    textarea, input, button { display: block; margin: 10px 0; width: 100%; max-width: 500px; }
+    button { cursor: pointer; }
+  </style>
+  </head>
+  <body>
+    <h1>Encryption App</h1>
+
+    <h3>Encrypt a Message</h3>
+    <textarea id="message" rows="4"
+      placeholder="Enter your message here..."></textarea>
+    <input id="key" type="text"
+      placeholder="Enter a 64-character symmetric key (or generate one below)" />
+    <button id="encrypt">Encrypt</button>
+    <h4>Encrypted Message:</h4>
+    <textarea id="encryptedMessage" rows="4" readonly></textarea>
+
+    <h3>Decrypt a Message</h3>
+    <textarea id="decryptMessage" rows="4"
+      placeholder="Paste your encrypted message here..."></textarea>
+    <input id="decryptKey" type="text" placeholder="Enter your symmetric key" />
+    <button id="decrypt">Decrypt</button>
+    <h4>Decrypted Message:</h4>
+    <textarea id="decryptedMessage" rows="4" readonly></textarea>
+
+    <h3>Generate a Symmetric Key</h3>
+    <button id="generateKey">Generate Key</button>
+    <h4>Generated Key:</h4>
+    <textarea id="generatedKey" rows="1" readonly></textarea>
+
+    <script>
+    const encryptButton = document.getElementById("encrypt");
+    const decryptButton = document.getElementById("decrypt");
+    const generateKeyButton = document.getElementById("generateKey");
+
+    encryptButton.addEventListener("click", async () => {
+      const message = document.getElementById("message").value;
+      const key = document.getElementById("key").value;
+
+      try {
+        const response = await fetch("/encrypt", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message, key })
+        });
+        const data = await response.json();
+        if (data.encrypted) {
+          document.getElementById("encryptedMessage").value = data.encrypted;
+        } else {
+          alert(data.error);
+        }
+      } catch (err) {
+        alert("Error encrypting the message.");
+      }
+    });
+
+    decryptButton.addEventListener("click", async () => {
+      const encryptedMessage = document.getElementById("decryptMessage").value;
+      const key = document.getElementById("decryptKey").value;
+
+      try {
+        const response = await fetch("/decrypt", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ encryptedMessage, key })
+        });
+        const data = await response.json();
+        if (data.decrypted) {
+          document.getElementById("decryptedMessage").value = data.decrypted;
+        } else {
+          alert(data.error);
+        }
+      } catch (err) {
+        alert("Error decrypting the message.");
+      }
+    });
+
+    generateKeyButton.addEventListener("click", async () => {
+      try {
+        const response = await fetch("/generate-key");
+        const data = await response.json();
+        if (data.key) {
+          document.getElementById("generatedKey").value = data.key;
+        }
+      } catch (err) {
+        alert("Error generating a symmetric key.");
+      }
+    });
+  </script>
+  </body>
+</html>
